@@ -1,0 +1,42 @@
+name: Publish Container Image
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  
+env:
+  registry: arkitema
+  image_name: rover
+  version: v0.17.1
+  
+jobs:
+  build-image:
+    name: Build and Push Image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Log into registry ${{ env.registry }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ghcr.io/${{ env.registry }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Image
+        run: |
+          docker build \
+            --build-arg VERSION=${{ env.version }} \
+            -t ${{ env.registry }}/${{ env.image_name }}:${{ env.version }} .
+
+      - name: Push Image
+        if: github.event_name != 'pull_request'
+        run: docker push ${{ env.registry }}/${{ env.image_name }}:${{ env.version }}
