@@ -35,8 +35,8 @@ jobs:
         run: |
           docker build \
             --build-arg VERSION=${{ env.version }} \
-            -t ${{ env.registry }}/${{ env.image_name }}:${{ env.version }} .
+            -t ghcr.io/${{ env.registry }}/${{ env.image_name }}:${{ env.version }} .
 
       - name: Push Image
         if: github.event_name != 'pull_request'
-        run: docker push ${{ env.registry }}/${{ env.image_name }}:${{ env.version }}
+        run: docker push ghcr.io/${{ env.registry }}/${{ env.image_name }}:${{ env.version }}
