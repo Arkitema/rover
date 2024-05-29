@@ -14,7 +14,7 @@ permissions:
 env:
   registry: arkitema
   image_name: rover
-  version: v0.16.2
+  version: v0.23.0
   
 jobs:
   build-image:
